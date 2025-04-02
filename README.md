@@ -1,106 +1,59 @@
-# Dev Agent
+# Weather Agent Python App
 
-A customizable framework for building developer-focused AI agents. Dev Agent is an alternative to tools like OpenManus and Manus AI, but with a focus on providing a simple skeleton that developers can easily extend to build custom agents tailored to their specific needs.
-
-## Philosophy
-
-This project is **not** about providing a generic tasks agent for everyone. Instead, it offers a minimal foundation that allows developers to understand and customize every aspect of their AI agents.
-
-## Prerequisites
-
-- Node.js (version specified in `.nvmrc`)
-- npm or yarn
+A simple weather agent implementation using pydantic-ai-slim.
 
 ## Installation
+
+1. Create a virtual environment:
 ```bash
-git clone https://github.com/hthuong09/dev-agent
-cd dev-agent
-npm install
+uv venv                           
+source .venv/bin/activate
 ```
 
-## Configuration
-
-1. Copy the sample environment file:
+2. Install dependencies:
 ```bash
-cp .env.sample .env
+uv pip install -r requirements.txt
 ```
 
-2. Update the `.env` file with your configuration values.
+3. Set up environment variables:
+   - Copy `.env.sample` to `.env`
+   - Update the values in `.env` with your API keys
 
 ## Project Structure
 
 ```
-src/
-├── agents/     # Agent implementations, you'll need to define the prompt & usable tools here
-├── core/       # Core framework components
-├── tools/      # Tool implementations, you can be shared between agents
-└── index.ts    # Main entry point
+├── agents/             # Agent definitions
+├── core/              # Core functionality
+├── tools/             # Tool implementations
+├── logs/              # Log files
+├── run.py             # Main script
+├── run_interactive.py # Interactive mode script
+└── requirements.txt   # Project dependencies
 ```
 
-## Using Dev Agent
-Dev Agent is designed to be extended through custom tools and agents. Here's how to build your own:
+## Running the Application
 
-### 1. Create a Custom Tool
+There are two ways to run the application:
 
-Create a new file in the `src/tools` directory:
-
-```typescript
-// src/tools/example.tool.ts
-import { tool } from "ai";
-import { z } from "zod";
-
-export const ExampleTool = tool({
-  description: "Description of what your tool does",
-  parameters: z.object({
-    param1: z.string().describe("Description of parameter 1"),
-    param2: z.number().describe("Description of parameter 2"),
-  }),
-  execute: async ({ param1, param2 }) => {
-    // Your tool implementation here
-    return {
-      result: `Processed ${param1} with value ${param2}`,
-    };
-  },
-});
+1. Standard mode:
+```bash
+python run.py
 ```
+This will run the weather agent with a predefined prompt to check temperatures in London, Ha Noi, and HCM based on conditions.
 
-### 2. Create a Custom Agent
-
-Create a new file in the `src/agents` directory:
-
-```typescript
-// src/agents/example.agent.ts
-import { Agent } from "@/core/types";
-import { ExampleTool } from "@/tools/example.tool";
-
-export const exampleAgent: Agent = {
-  systemPrompt:
-    "You are a helpful assistant that can use tools to solve problems. Think carefully about which tool to use.",
-  tools: {
-    example: ExampleTool,
-    // Add more tools as needed
-  },
-};
+2. Interactive mode:
+```bash
+python run_interactive.py
 ```
+This allows you to interact with the agent directly.
 
-### 3. Use Your Agent in the Main Application
+## Dependencies
 
-Update the `src/index.ts` file to use your custom agent:
+- pydantic-ai-slim: For AI agent implementation
+- python-dotenv: For environment variable management
+- colorama: For terminal color output
 
-```typescript
-import dotenv from "dotenv";
-import { exampleAgent } from "./agents/example.agent";
-import { gemini20FlashModel } from "./core/ai.provider";
-import { run } from "./core/runner";
-dotenv.config();
+## Environment Variables
 
-async function main() {
-  await run(
-    exampleAgent,
-    gemini20FlashModel,
-    "Your prompt or user query here"
-  );
-}
-
-main().catch(console.error);
-```
+Required environment variables (see `.env.sample`):
+- Add your required API keys to the `.env` file
