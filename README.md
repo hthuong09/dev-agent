@@ -38,9 +38,34 @@ src/
 ```
 
 ## Using Dev Agent
-Dev Agent is designed to be extended through custom tools and agents. Here's how to build your own:
 
-### 1. Create a Custom Tool
+Dev Agent supports two modes of operation:
+1. Single Query Mode - Process a single query and exit
+2. Interactive Mode - Maintain a conversation with the agent
+
+### Single Query Mode
+
+```bash
+npm start
+```
+
+### Interactive Mode
+
+Interactive mode maintains conversation context between prompts, allowing for more complex interactions:
+
+```bash
+npm run start:interactive
+```
+
+In interactive mode:
+- Type your prompts and press Enter
+- The agent will process each prompt while maintaining context
+- Type 'stop' to end the session
+- The agent will continue processing until it completes the task or explicitly stops
+
+### Creating Custom Tools and Agents
+
+#### 1. Create a Custom Tool
 
 Create a new file in the `src/tools` directory:
 
@@ -64,7 +89,7 @@ export const ExampleTool = tool({
 });
 ```
 
-### 2. Create a Custom Agent
+#### 2. Create a Custom Agent
 
 Create a new file in the `src/agents` directory:
 
@@ -83,9 +108,9 @@ export const exampleAgent: Agent = {
 };
 ```
 
-### 3. Use Your Agent in the Main Application
+#### 3. Use Your Agent
 
-Update the `src/index.ts` file to use your custom agent:
+For single query mode, update `src/index.ts`:
 
 ```typescript
 import dotenv from "dotenv";
@@ -103,4 +128,22 @@ async function main() {
 }
 
 main().catch(console.error);
+```
+
+For interactive mode, update `src/run-interactive.ts`:
+
+```typescript
+import "dotenv/config";
+import { exampleAgent } from "./agents/example.agent";
+import { gemini20FlashModel } from "./core/ai.provider";
+import { runInteractive } from "./core/runner.interactive";
+
+async function main() {
+  await runInteractive(exampleAgent, gemini20FlashModel);
+}
+
+main().catch((error) => {
+  console.error("Error:", error);
+  process.exit(1);
+});
 ```
