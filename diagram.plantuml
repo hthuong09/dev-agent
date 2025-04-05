@@ -1,0 +1,48 @@
+@startuml Agent Core Concept
+skinparam backgroundColor white
+skinparam monochrome true
+
+actor User
+participant "Agent Runner" as Runner
+participant "LLM" as LLM
+participant "Tool Manager" as Tools
+
+User -> Runner: Send Query/Task
+activate Runner
+note right of Runner
+  Initial Context:
+  - System prompt
+  - User query
+  - Available tools list
+end note
+
+loop Task Completion
+    Runner -> LLM: Send Full Context
+    note right of Runner
+      Full Context:
+      - All previous messages
+      - All tool calls & results
+      - Current state
+    end note
+    activate LLM
+    
+    alt LLM decides to use tool
+        LLM --> Runner: Tool Call Request
+        deactivate LLM
+        Runner -> Tools: Execute Tool
+        activate Tools
+        Tools --> Runner: Tool Result
+        deactivate Tools
+        Runner -> Runner: Append to Context
+        
+    else LLM decides task is complete
+        LLM --> Runner: Stop Signal + Final Response
+        deactivate LLM
+        Runner -> User: Return Final Result
+        deactivate Runner
+        note right of Runner
+          Stop
+        end note
+    end
+end
+@enduml
