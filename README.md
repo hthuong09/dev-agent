@@ -11,6 +11,10 @@ This project is **not** about providing a generic tasks agent for everyone. Inst
 - Node.js (version specified in `.nvmrc`)
 - npm or yarn
 
+## How does it works
+![diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/hthuong09/dev-agent/refs/heads/main/diagram.plantuml)
+
+
 ## Installation
 ```bash
 git clone https://github.com/hthuong09/dev-agent
